@@ -3,6 +3,8 @@
 import angular from 'angular';
 
 export function Modal($rootScope, $uibModal) {
+  'ngInject';
+
   /**
    * Opens a modal
    * @param  {Object} scope      - an object to be merged with modal's scope
@@ -39,7 +41,7 @@ export function Modal($rootScope, $uibModal) {
          * @param  {All}           - any additional args are passed straight to del callback
          */
         return function(...args) {
-          var slicedArgs = Reflect.apply(Array.prototype.slice, args);
+          var slicedArgs = Reflect.apply(Array.prototype.slice, args, []);
           var name = slicedArgs.shift();
           var deleteModal;
 
@@ -66,6 +68,60 @@ export function Modal($rootScope, $uibModal) {
 
           deleteModal.result.then(function(event) {
             Reflect.apply(del, event, slicedArgs);
+          });
+        };
+      }
+    },
+    alert: {
+      success(success = angular.noop) {
+        return function(...args) {
+          var slicedArgs = Reflect.apply(Array.prototype.slice, args, []);
+          var message = slicedArgs.shift();
+          var successModal;
+
+          successModal = openModal({
+            modal: {
+              dismissable: true,
+              title: 'Success',
+              html: `<p>${message}</p>`,
+              buttons: [{
+                classes: 'btn-success',
+                text: 'Ok',
+                click(e) {
+                  successModal.close(e);
+                }
+              }]
+            }
+          }, 'modal-success');
+
+          successModal.result.then(function(event) {
+            Reflect.apply(success, event, slicedArgs);
+          });
+        };
+      },
+      error(error = angular.noop) {
+        return function(...args) {
+          var slicedArgs = Reflect.apply(Array.prototype.slice, args, []);
+          var message = slicedArgs.shift();
+          var errorModal;
+
+          errorModal = openModal({
+            modal: {
+              dismissable: true,
+              title: 'Success',
+              html: `<p>${message}</p>`,
+              buttons: [{
+                classes: 'btn-error',
+                text: 'Ok',
+                click(e) {
+                  errorModal.close(e);
+                }
+              }]
+            }
+          }, 'modal-error');
+
+          errorModal.result.then(function(event) {
+            Reflect.apply(error, event, slicedArgs);
           });
         };
       }

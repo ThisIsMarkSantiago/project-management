@@ -48,6 +48,7 @@ export default function(sequelize, DataTypes) {
       profile() {
         return {
           name: this.name,
+          email: this.email,
           role: this.role
         };
       },

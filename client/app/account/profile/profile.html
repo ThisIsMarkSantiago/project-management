@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>
+        <span ng-hide="vm.updateMode"> Your </span>
+        <span ng-show="vm.updateMode"> Update </span>
+        profile
+      </h1>
+    </div>
+    <div class="col-sm-12" ng-hide="vm.updateMode">
+      <dl>
+        <dt> Name </dt>
+        <dd ng-bind="vm.profile.name"></dd>
+      </dl>
+      <dl>
+        <dt> Email </dt>
+        <dd ng-bind="vm.profile.email"></dd>
+      </dl>
+      <div>
+        <button class="btn btn-lg btn-default" type="button" ng-click="vm.updateMode = true"> Update Profile </button>
+        <a ui-sref="password" class="btn btn-lg btn-default"> Change Password </a>
+      </div>
+    </div>
+    <div class="col-sm-12" ng-show="vm.updateMode">
+      <form class="form" name="form" ng-submit="vm.submit(form)" novalidate>
+        <div class="form-group" ng-class="{ 'has-success': form.name.$valid && vm.submitted,
+                                            'has-error': form.name.$invalid && vm.submitted }">
+          <label> Name </label>
+          <input type="text" name="name" class="form-control" ng-model="vm.user.name" required />
+          <p class="help-block" ng-show="form.name.$error.required && vm.submitted">
+            A name is required
+          </p>
+        </div>
+
+        <div class="form-group" ng-class="{ 'has-success': form.email.$valid && vm.submitted,
+                                            'has-error': form.email.$invalid && vm.submitted }">
+          <label> Email </label>
+          <input type="email" name="email" class="form-control" ng-model="vm.user.email" required mongoose-error />
+          <p class="help-block" ng-show="form.email.$error.email && vm.submitted">
+            Doesn't look like a valid email.
+          </p>
+          <p class="help-block" ng-show="form.email.$error.required && vm.submitted">
+            What's your email address?
+          </p>
+          <p class="help-block" ng-show="form.email.$error.mongoose">
+            {{ vm.errors.email }}
+          </p>
+          <p class="help-block">{{ vm.errors.profile }}</p>
+        </div>
+
+        <div>
+          <button class="btn btn-inverse btn-lg" type="submit"> Submit </button>
+          <button class="btn btn-default btn-lg" type="button" ng-click="vm.updateMode = false"> Cancel </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
