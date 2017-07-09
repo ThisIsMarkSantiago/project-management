@@ -1,6 +1,6 @@
 'use strict';
 
-import {User} from '../../sqldb';
+import { User } from '../../sqldb';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
 
@@ -8,6 +8,26 @@ function validationError(res, statusCode) {
   statusCode = statusCode || 422;
   return function(err) {
     return res.status(statusCode).json(err);
+  };
+}
+
+function respondWithResult(res, statusCode) {
+  statusCode = statusCode || 200;
+  return function(entity) {
+    if(entity) {
+      return res.status(statusCode).json(entity);
+    }
+    return null;
+  };
+}
+
+function handleEntityNotFound(res) {
+  return function(entity) {
+    if(!entity) {
+      res.status(404).end();
+      return null;
+    }
+    return entity;
   };
 }
 
@@ -53,6 +73,24 @@ export function create(req, res) {
       res.json({ token });
     })
     .catch(validationError(res));
+}
+
+
+// Updates an existing user in the DB
+export function update(req, res) {
+  if(req.body._id) {
+    Reflect.deleteProperty(req.body, '_id');
+  }
+  return User.update(req.body, {
+    where: {
+      _id: req.params.id
+    }
+  })
+    // .then(handleEntityNotFound(res))
+    .then(() => User.findById(req.params.id))
+    .then(user => user.profile)
+    .then(respondWithResult(res))
+    .catch(handleError(res));
 }
 
 /**

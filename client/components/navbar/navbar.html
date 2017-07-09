@@ -30,7 +30,7 @@
           <p class="navbar-text"> Hello {{ $ctrl.getCurrentUser().name }} </p>
         </li>
         <li ng-switch-when="true" ui-sref-active="active">
-          <a ui-sref="settings"> <span class="glyphicon glyphicon-cog"></span> </a>
+          <a ui-sref="profile"> <span class="glyphicon glyphicon-cog"></span> </a>
         </li>
         <li ng-switch-when="true">
           <a ui-sref="logout"> Logout </a>

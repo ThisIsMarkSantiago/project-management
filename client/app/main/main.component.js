@@ -4,7 +4,6 @@ import routing from './main.routes';
 
 export class MainController {
   awesomeThings = [];
-  newThing = '';
 
   /*@ngInject*/
   constructor($http, $scope, socket) {

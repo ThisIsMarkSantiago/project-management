@@ -6,10 +6,12 @@ import uiRouter from 'angular-ui-router';
 
 import routing from './account.routes';
 import login from './login';
-import settings from './settings';
+import password from './password';
 import signup from './signup';
+import profile from './profile';
+import Modal from '../../components/modal/modal.service';
 
-export default angular.module('projectManagementApp.account', [uiRouter, login, settings, signup])
+export default angular.module('projectManagementApp.account', [uiRouter, login, password, signup, profile, Modal])
   .config(routing)
   .run(function($rootScope) {
     'ngInject';
