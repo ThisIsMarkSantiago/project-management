@@ -1,0 +1,25 @@
+<form name="projectForm" ng-submit="vm.save(projectForm)">
+  <div class="modal-header">
+    <h3 class="modal-title" id="modal-title"> Customer Form </h3>
+  </div>
+  <div class="modal-body" id="modal-body">
+    <div class="form-group" ng-class="{ 'has-error': projectForm.name.$invalid && projectForm.name.$touched }">
+      <label class="control-label" for="name"> Name </label>
+      <input type="text" name="name" aria-describedby="required-name"
+        id="name" class="form-control"
+        ng-model="vm.project.name" required />
+      <span id="required-name" class="help-block" ng-show="projectForm.name.$error.required && projectForm.name.$touched"> Please provide name for the project </span>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error': projectForm.info.$invalid && projectForm.info.$touched }">
+      <label class="control-label" for="info"> Description </label>
+      <textarea type="text" aria-describedby="required-info"
+        id="info" class="form-control"
+        ng-model="vm.project.info" required></textarea>
+      <span id="required-info" class="help-block" ng-show="projectForm.info.$error.required && projectForm.info.$touched"> Please provide description of the project </span>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="submit"> Save </button>
+    <button class="btn btn-warning" type="button" ng-click="vm.dismiss()"> Cancel </button>
+  </div>
+</form>

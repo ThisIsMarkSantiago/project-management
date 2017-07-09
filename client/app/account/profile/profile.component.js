@@ -29,7 +29,7 @@ export default class ProfileComponent {
         .then(response => {
           this.user = response.data;
           this.profile = response.data;
-          this.Modal.alert.success()('User profile successfully updated!')
+          this.Modal.alert.success()('User profile successfully updated!');
         })
         .catch(err => {
           this.errors.profile = err.message;
