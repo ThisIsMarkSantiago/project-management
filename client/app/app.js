@@ -35,6 +35,9 @@ angular.module('projectManagementApp', [ngCookies, ngResource, ngSanitize, 'btfo
   constants, socket, util
 ])
   .config(routeConfig)
+  .config(['treeConfig', function(treeConfig) {
+    treeConfig.defaultCollapsed = true;
+  }])
   .run(function($rootScope, $location, Auth) {
     'ngInject';
     // Redirect to login if route requires auth and you're not logged in

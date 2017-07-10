@@ -1,6 +1,6 @@
 'use strict';
 
-import { User } from '../../sqldb';
+import { User, Project } from '../../sqldb';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
 
@@ -168,6 +168,20 @@ export function me(req, res, next) {
     })
     .catch(err => next(err));
 }
+
+
+// Gets all Projects of a User from the DB
+export function projects(req, res) {
+  return Project.findAll({
+    where: {
+      UserId: req.params.id,
+      active: true
+    }
+  })
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
 
 /**
  * Authentication callback

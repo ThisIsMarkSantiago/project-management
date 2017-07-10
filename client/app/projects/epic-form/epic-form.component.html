@@ -1,0 +1,28 @@
+<form name="epicForm" ng-submit="vm.save(epicForm)">
+  <div class="modal-header">
+    <h3 class="modal-title" id="modal-title"> Epic Form </h3>
+  </div>
+  <div class="modal-body" id="modal-body">
+    <div class="form-group" ng-class="{ 'has-error': epicForm.name.$invalid && epicForm.name.$touched }">
+      <label class="control-label" for="name"> Name </label>
+      <input type="text" name="name" aria-describedby="required-name"
+        id="name" class="form-control"
+        ng-model="vm.epic.name" required  ng-readonly="vm.viewMode"/>
+      <span id="required-name" class="help-block" ng-show="epicForm.name.$error.required && epicForm.name.$touched"> Please provide name for the epic </span>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error': epicForm.info.$invalid && epicForm.info.$touched }">
+      <label class="control-label" for="info"> Description </label>
+      <textarea type="text" aria-describedby="required-info"
+        id="info" class="form-control"
+        ng-model="vm.epic.info" required ng-readonly="vm.viewMode"></textarea>
+      <span id="required-info" class="help-block" ng-show="epicForm.info.$error.required && epicForm.info.$touched"> Please provide description of the epic </span>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="submit" ng-if="!vm.viewMode"> Save </button>
+    <button class="btn" ng-class="{ 'btn-warning': !vm.viewMode, 'btn-default': vm.viewMode }" type="button" ng-click="vm.dismiss()">
+      <span ng-hide="vm.viewMode"> Cancel </span>
+      <span ng-show="vm.viewMode"> Close </span>
+    </button>
+  </div>
+</form>
