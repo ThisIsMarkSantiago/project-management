@@ -11,18 +11,23 @@ export default function seedDatabaseIfNeeded() {
   if(config.seedDB) {
     let Thing = sqldb.Thing;
     let User = sqldb.User;
+    let Project = sqldb.Project;
 
     Thing.destroy({ where: {} })
       .then(() => {
         let thing = Thing.bulkCreate([{
           name: 'Project Management',
           info: 'Manage your projects. Create, update and delete projects of your own.',
-          state: 'projects.list'
+          state: 'projects'
         }]);
         return thing;
       })
       .then(() => console.log('finished populating things'))
       .catch(err => console.log('error populating things', err));
+
+    Project.destroy({ where: {} })
+      .then(() => console.log('finished populating projects'))
+      .catch(err => console.log('error populating projects', err));
 
     return User.destroy({ where: {} })
       .then(() => User.bulkCreate([{

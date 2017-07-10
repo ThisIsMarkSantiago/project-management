@@ -9,6 +9,7 @@ import ngSanitize from 'angular-sanitize';
 import 'angular-socket-io';
 
 import uiRouter from 'angular-ui-router';
+import uiTree from 'angular-ui-tree';
 import uiBootstrap from 'angular-ui-bootstrap';
 import 'angular-validation-match';
 
@@ -22,6 +23,7 @@ import admin from './admin';
 import navbar from '../components/navbar/navbar.component';
 import footer from '../components/footer/footer.component';
 import main from './main/main.component';
+import projects from './projects/projects.component';
 import constants from './app.constants';
 import util from '../components/util/util.module';
 import socket from '../components/socket/socket.service';
@@ -29,7 +31,7 @@ import socket from '../components/socket/socket.service';
 import './app.less';
 
 angular.module('projectManagementApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io',
-  uiRouter, uiBootstrap, _Auth, account, admin, 'validation.match', navbar, footer, main,
+  uiRouter, uiTree, uiBootstrap, _Auth, account, admin, 'validation.match', navbar, footer, main, projects,
   constants, socket, util
 ])
   .config(routeConfig)
