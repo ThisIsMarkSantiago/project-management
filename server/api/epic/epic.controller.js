@@ -3,6 +3,7 @@
  * GET     /api/epics              ->  index
  * POST    /api/epics              ->  create
  * GET     /api/epics/:id          ->  show
+ * GET     /api/epics/:id/stories  ->  stories
  * PUT     /api/epics/:id          ->  upsert
  * PATCH   /api/epics/:id          ->  patch
  * DELETE  /api/epics/:id          ->  destroy
@@ -156,6 +157,7 @@ export function destroy(req, res) {
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
+
 // Gets all Stories of an Epic from the DB
 export function stories(req, res) {
   return Story

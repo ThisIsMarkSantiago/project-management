@@ -1,18 +1,17 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/stories                ->  index
- * POST    /api/stories                ->  create
- * GET     /api/stories/:id            ->  show
- * GET     /api/stories/:id/assertions ->  assertions
- * PUT     /api/stories/:id            ->  upsert
- * PATCH   /api/stories/:id            ->  patch
- * DELETE  /api/stories/:id            ->  destroy
+ * GET     /api/assertions              ->  index
+ * POST    /api/assertions              ->  create
+ * GET     /api/assertions/:id          ->  show
+ * PUT     /api/assertions/:id          ->  upsert
+ * PATCH   /api/assertions/:id          ->  patch
+ * DELETE  /api/assertions/:id          ->  destroy
  */
 
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Story, Assertion } from '../../sqldb';
+import { Assertion } from '../../sqldb';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -65,9 +64,9 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Storys
+// Gets a list of Assertions
 export function index(req, res) {
-  return Story
+  return Assertion
     .findAll({
       where: {
         active: true
@@ -77,9 +76,9 @@ export function index(req, res) {
     .catch(handleError(res));
 }
 
-// Gets a single Story from the DB
+// Gets a single Assertion from the DB
 export function show(req, res) {
-  return Story
+  return Assertion
     .find({
       where: {
         _id: req.params.id
@@ -90,32 +89,32 @@ export function show(req, res) {
     .catch(handleError(res));
 }
 
-// Creates a new Story in the DB
+// Creates a new Assertion in the DB
 export function create(req, res) {
-  if(!req.body.EpicId) {
-    return handleError(res)(new Error('EpicId is required'), 404);
+  if(!req.body.StoryId) {
+    return handleError(res)(new Error('StoryId is required'), 404);
   }
-  return Story
+  return Assertion
     .count({
       where: {
-        EpicId: req.body.EpicId
+        StoryId: req.body.StoryId
       }
     })
     .then(count => {
-      req.body.code = `S${count + 1}`;
-      return Story.create(req.body);
+      req.body.code = `A${count + 1}`;
+      return Assertion.create(req.body);
     })
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Upserts the given Story in the DB at the specified ID
+// Upserts the given Assertion in the DB at the specified ID
 export function upsert(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
 
-  return Story
+  return Assertion
     .upsert(req.body, {
       where: {
         _id: req.params.id
@@ -125,12 +124,12 @@ export function upsert(req, res) {
     .catch(handleError(res));
 }
 
-// Updates an existing Story in the DB
+// Updates an existing Assertion in the DB
 export function patch(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
-  return Story
+  return Assertion
     .find({
       where: {
         _id: req.params.id
@@ -142,9 +141,9 @@ export function patch(req, res) {
     .catch(handleError(res));
 }
 
-// Deletes a Story from the DB
+// Deletes a Assertion from the DB
 export function destroy(req, res) {
-  return Story
+  return Assertion
     .find({
       where: {
         _id: req.params.id
@@ -155,19 +154,6 @@ export function destroy(req, res) {
       { op: 'replace', path: '/active', value: false }
     ]))
     // .then(removeEntity(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
-}
-
-// Gets all Assertions of a Story from the DB
-export function assertions(req, res) {
-  return Assertion
-    .findAll({
-      where: {
-        StoryId: req.params.id,
-        active: true
-      }
-    })
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

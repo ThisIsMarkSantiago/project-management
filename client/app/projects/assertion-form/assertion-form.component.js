@@ -1,7 +1,7 @@
 'use strict';
 const angular = require('angular');
 
-export class ProjectFormComponent {
+export class AssertionFormComponent {
   /*@ngInject*/
   $onInit() {
     angular.extend(this, this.resolve);
@@ -9,20 +9,20 @@ export class ProjectFormComponent {
 
   save(form) {
     if(form.$valid) {
-      this.close({ $value: this.project });
+      this.close({ $value: this.assertion });
     }
   }
 }
 
-export default angular.module('projectsApp.projects.form', [])
-  .component('projectForm', {
-    template: require('./project-form.component.html'),
+export default angular.module('assertionsApp.assertions.form', [])
+  .component('assertionForm', {
+    template: require('./assertion-form.component.html'),
     bindings: {
       resolve: '<',
       dismiss: '&',
       close: '&'
     },
-    controller: ProjectFormComponent,
+    controller: AssertionFormComponent,
     controllerAs: 'vm'
   })
   .name;

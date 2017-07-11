@@ -4,8 +4,7 @@ const angular = require('angular');
 export class EpicFormComponent {
   /*@ngInject*/
   $onInit() {
-    this.epic = this.resolve.epic;
-    this.viewMode = this.resolve.viewMode;
+    angular.extend(this, this.resolve);
   }
 
   save(form) {
