@@ -15,12 +15,12 @@
         <ol ui-tree-nodes="" ng-model="vm.projects">
           <li ng-repeat="project in vm.projects" ui-tree-node data-nodrag>
             <div ui-tree-handle>
-              <a href="#" ng-click="toggle(this); vm.getEpics(project, collapsed);" ng-if="!project.epics || project.epics.length">
+              <a href="#" ng-click="toggle(this); vm.getEpics(project, collapsed);">
                 <i class="glyphicon"
                   ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
                 </i>
               </a>
-              {{ project.name }}
+              {{ project.name | limitTo : 40 }}
               <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openEpicForm(project, { ProjectId: vm.project._id })">
                 <b> E </b>
               </button>
@@ -30,12 +30,12 @@
             <ol ui-tree-nodes="" ng-model="project.epics" ng-class="{ hidden: collapsed }">
               <li ng-repeat="epic in project.epics" ui-tree-node data-nodrag>
                 <div ui-tree-handle>
-                  <a href="#" ng-click="toggle(this); vm.getStories(epic, collapsed);" ng-if="!epic.stories || epic.stories.length">
+                  <a href="#" ng-click="toggle(this); vm.getStories(epic, collapsed);">
                     <i class="glyphicon"
                       ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
                     </i>
                   </a>
-                  {{ epic.code }} - {{ epic.name }}
+                  {{ epic.code }} - {{ epic.name | limitTo : 40 }}
                   <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openStoryForm(epic, { EpicId: epic._id })">
                     <b> S </b>
                   </button>
@@ -54,13 +54,13 @@
                 <ol ui-tree-nodes="" ng-model="epic.stories" ng-class="{ hidden: collapsed }">
                   <li ng-repeat="story in epic.stories" ui-tree-node data-nodrag>
                     <div ui-tree-handle>
-                      <a href="#" ng-click="toggle(this); vm.getAssertions(story, collapsed);" ng-if="!story.assertions || story.assertions.length">
+                      <a href="#" ng-click="toggle(this); vm.getAssertions(story, collapsed);">
                         <i class="glyphicon"
                           ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
                         </i>
                       </a>
-                      {{ story.code }} - {{ story.name }}
-                      <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openAssertionForm(story, { StoryId: story._id })">
+                      {{ story.code }} - {{ story.name | limitTo : 40 }}
+                      <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openAssertionForm(epic, story, { StoryId: story._id })">
                         <b> A </b>
                       </button>
                       <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openMockupForm(story, { StoryId: story._id })">
@@ -76,8 +76,28 @@
                         <i class="glyphicon glyphicon-trash"></i>
                       </button>
                     </div>
+
+                    <!-- ASSERTIONS -->
+                    <ol ui-tree-nodes="" ng-model="story.assertions" ng-class="{ hidden: collapsed }">
+                      <li ng-repeat="assertion in story.assertions" ui-tree-node data-nodrag>
+                        <div ui-tree-handle>
+                          {{ assertion.code }} - {{ assertion.info | limitTo : 40 }}
+                          <button class="btn btn-xs btn-default" type="button" ng-click="vm.openAssertionForm(epic, story, assertion, true)">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                          </button>
+                          <button class="btn btn-xs btn-success" type="button" ng-click="vm.openAssertionForm(epic, story, assertion)">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                          </button>
+                          <button class="btn btn-xs btn-danger" type="button" ng-click="vm.deleteAssertion(assertion.info, assertion, story)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                          </button>
+                        </div>
+                      </li>
+                    </ol>
+
                   </li>
                 </ol>
+
               </li>
             </ol>
 

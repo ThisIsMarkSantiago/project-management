@@ -12,8 +12,9 @@ export default function seedDatabaseIfNeeded() {
     let Thing = sqldb.Thing;
     let User = sqldb.User;
     let Project = sqldb.Project;
-    let Epic = sqldb.User;
-    let Story = sqldb.User;
+    let Epic = sqldb.Epic;
+    let Story = sqldb.Story;
+    let Assertion = sqldb.Assertion;
 
     Thing.destroy({ where: {} })
       .then(() => {
@@ -38,6 +39,10 @@ export default function seedDatabaseIfNeeded() {
     Story.destroy({ where: {} })
       .then(() => console.log('finished populating stories'))
       .catch(err => console.log('error populating stories', err));
+
+    Assertion.destroy({ where: {} })
+      .then(() => console.log('finished populating assertions'))
+      .catch(err => console.log('error populating assertions', err));
 
     return User.destroy({ where: {} })
       .then(() => User.bulkCreate([{

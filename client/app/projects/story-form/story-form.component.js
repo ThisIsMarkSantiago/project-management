@@ -5,6 +5,7 @@ export class StoryFormComponent {
   /*@ngInject*/
   $onInit() {
     this.story = this.resolve.story;
+    this.epic = this.resolve.epic;
     this.viewMode = this.resolve.viewMode;
   }
 

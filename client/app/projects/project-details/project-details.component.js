@@ -3,6 +3,7 @@ const angular = require('angular');
 
 import epicForm from '../epic-form/epic-form.component';
 import storyForm from '../story-form/story-form.component';
+import assertionForm from '../assertion-form/assertion-form.component';
 
 export class projectDetailsComponent {
   project;
@@ -30,7 +31,7 @@ export class projectDetailsComponent {
         }
         this.projects = [this.project];
       })
-      .catch(error => this.$state.go('projects'));
+      .catch(() => this.$state.go('projects'));
 
     this.deleteEpic = this.Modal.confirm.delete((epic, project) => {
       this.$http
@@ -48,6 +49,16 @@ export class projectDetailsComponent {
         .then(() => {
           this.Modal.alert.success()('Epic successfully deleted!');
           epic.stories.splice(epic.stories.indexOf(story), 1);
+        })
+        .catch(() => this.Modal.alert.error()('An error occured deleting the story!'));
+    });
+
+    this.deleteAssertion = this.Modal.confirm.delete((assertion, story) => {
+      this.$http
+        .delete(`/api/assertions/${assertion._id}`)
+        .then(() => {
+          this.Modal.alert.success()('Epic successfully deleted!');
+          story.assertions.splice(story.assertions.indexOf(assertion), 1);
         })
         .catch(() => this.Modal.alert.error()('An error occured deleting the story!'));
     });
@@ -97,10 +108,7 @@ export class projectDetailsComponent {
   getStories(epic, collapased) {
     if(!collapased) {
       this.$http.get(`/api/epics/${epic._id}/stories`)
-        .then(result => {
-          console.log(epic);
-          epic.stories = result.data;
-        });
+        .then(result => epic.stories = result.data);
     }
   }
 
@@ -110,6 +118,7 @@ export class projectDetailsComponent {
         component: 'storyForm',
         resolve: {
           story: () => angular.copy(story, {}),
+          epic: () => angular.copy(epic, {}),
           viewMode
         }
       });
@@ -135,9 +144,49 @@ export class projectDetailsComponent {
           .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the story!`));
       });
   }
+
+  getAssertions(story, collapased) {
+    if(!collapased) {
+      this.$http.get(`/api/stories/${story._id}/assertions`)
+        .then(result => story.assertions = result.data);
+    }
+  }
+
+  openAssertionForm(epic, story, assertion, viewMode) {
+    const modalInstance = this.$uibModal
+      .open({
+        component: 'assertionForm',
+        resolve: {
+          assertion: () => angular.copy(assertion, {}),
+          epic: () => angular.copy(epic, {}),
+          story: () => angular.copy(story, {}),
+          viewMode
+        }
+      });
+
+    modalInstance
+      .result
+      .then(result => {
+        this.$http[result._id ? 'patch' : 'post'](
+            `/api/assertions/${result._id || ''}`,
+            result._id ? [
+              { op: 'replace', path: '/info', value: result.info }
+            ] : result
+          )
+          .then(response => {
+            this.Modal.alert.success()(`Assertion successfully ${result._id ? 'upd' : 'cre'}ated!`);
+            if(result._id) {
+              story.assertions[story.assertions.indexOf(assertion)] = response.data;
+            } else {
+              story.assertions.push(response.data);
+            }
+          })
+          .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the assertion!`));
+      });
+  }
 }
 
-export default angular.module('projectManagementApp.projects.details', [epicForm, storyForm])
+export default angular.module('projectManagementApp.projects.details', [epicForm, storyForm, assertionForm])
   .component('projectDetails', {
     template: require('./project-details.component.html'),
     controller: projectDetailsComponent,
