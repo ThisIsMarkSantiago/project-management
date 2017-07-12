@@ -12,29 +12,33 @@ export class ProjectsComponent {
   projects = [];
 
   /*@ngInject*/
-  constructor($uibModal, Modal, $http) {
+  constructor($uibModal, Modal, $http, Auth) {
     angular.extend(this, {
       $http,
       $uibModal,
-      Modal
+      Modal,
+      Auth
     });
   }
 
   $onInit() {
-    this.getProjects();
-    this.deleteProject = this.Modal.confirm.delete(project => {
-      this.$http
-        .delete(`/api/projects/${project._id}`)
-        .then(() => {
-          this.Modal.alert.success()('Project successfully deleted!');
-          this.getProjects();
-        })
-        .catch(() => this.Modal.alert.success()('An error occured deleting the project!'));
+    this.Auth.getCurrentUser().then(user => {
+      this.user = user;
+      this.getProjects();
+      this.deleteProject = this.Modal.confirm.delete(project => {
+        this.$http
+          .delete(`/api/projects/${project._id}`)
+          .then(() => {
+            this.Modal.alert.success()('Project successfully deleted!');
+            this.getProjects();
+          })
+          .catch(() => this.Modal.alert.error()('An error occured deleting the project!'));
+      });
     });
   }
 
   getProjects() {
-    return this.$http.get('/api/projects')
+    return this.$http.get(`/api/users/${this.user._id}/projects`)
       .then(response => {
         this.projects = response.data;
       });
@@ -63,7 +67,7 @@ export class ProjectsComponent {
             this.Modal.alert.success()(`Project successfully ${result._id ? 'upd' : 'cre'}ated!`);
             this.getProjects();
           })
-          .catch(() => this.Modal.alert.success()(`An error occured ${result._id ? 'upd' : 'cre'}ating the project!`));
+          .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the project!`));
       });
   }
 }

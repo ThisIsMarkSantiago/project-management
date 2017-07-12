@@ -1,7 +1,7 @@
 'use strict';
 
 export default function(sequelize, DataTypes) {
-  return sequelize.define('Project', {
+  return sequelize.define('Epic', {
     _id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -9,6 +9,10 @@ export default function(sequelize, DataTypes) {
       autoIncrement: true
     },
     name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    code: {
       type: DataTypes.STRING,
       allowNull: false
     },

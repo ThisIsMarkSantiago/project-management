@@ -11,7 +11,7 @@
     </div>
     <div uib-collapse="$ctrl.isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
-        <li ng-repeat="item in $ctrl.menu" ui-sref-active="active">
+        <li ng-repeat="item in $ctrl.menu" ui-sref-active="active" ng-hide="item.authenticate && !$ctrl.isLoggedIn()">
             <a ui-sref="{{item.state}}"> {{ item.title }} </a>
         </li>
         <li ng-show="$ctrl.isAdmin()" ui-sref-active="active">

@@ -10,15 +10,36 @@
   <div class="row">
     <div class="col-xs-12">
       <div ui-tree>
-        <ol ui-tree-nodes="" ng-model="vm.tree">
-          <li ng-repeat="project in vm.projects" ui-tree-node>
+        <ol ui-tree-nodes="" ng-model="vm.projects">
+          <li ng-repeat="project in vm.projects" ui-tree-node data-nodrag>
             <div ui-tree-handle>
+              <a href="#" ng-click="toggle(this); vm.getEpics(project, collapsed);" ng-if="!project.epics || project.epics.length">
+                <i class="glyphicon glyphicon-menu-right"></i>
+              </a>
               {{ project.name }}
+              <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openEpicForm(project, { ProjectId: vm.project._id })">
+                <b> E </b>
+              </button>
             </div>
-            <ol ui-tree-nodes="" ng-model="project.epics">
-              <li ng-repeat="epic in project.epics" ui-tree-node>
+            <ol ui-tree-nodes="" ng-model="project.epics" ng-class="{hidden: collapsed}">
+              <li ng-repeat="epic in project.epics" ui-tree-node data-nodrag>
                 <div ui-tree-handle>
-                  {{ epic.name }}
+                  <a href="#" ng-click="toggle(this)" ng-if="!epic.stories || epic.stories.length">
+                    <i class="glyphicon glyphicon-menu-right"></i>
+                  </a>
+                  {{ epic.code }} - {{ epic.name }}
+                  <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openEpicForm(project, { ProjectId: vm.project._id })">
+                    <b> S </b>
+                  </button>
+                  <button class="btn btn-xs btn-default" type="button" ng-click="vm.openEpicForm(project, epic, true)">
+                    <i class="glyphicon glyphicon-eye-open"></i>
+                  </button>
+                  <button class="btn btn-xs btn-success" type="button" ng-click="vm.openEpicForm(project, epic)">
+                    <i class="glyphicon glyphicon-pencil"></i>
+                  </button>
+                  <button class="btn btn-xs btn-danger" type="button" ng-click="vm.deleteEpic(epic.name, epic, project)">
+                    <i class="glyphicon glyphicon-trash"></i>
+                  </button>
                 </div>
               </li>
             </ol>

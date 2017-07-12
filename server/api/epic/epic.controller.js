@@ -1,18 +1,17 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/projects              ->  index
- * GET     /api/projects/:id/epics    ->  epics
- * POST    /api/projects              ->  create
- * GET     /api/projects/:id          ->  show
- * PUT     /api/projects/:id          ->  upsert
- * PATCH   /api/projects/:id          ->  patch
- * DELETE  /api/projects/:id          ->  destroy
+ * GET     /api/epics              ->  index
+ * POST    /api/epics              ->  create
+ * GET     /api/epics/:id          ->  show
+ * PUT     /api/epics/:id          ->  upsert
+ * PATCH   /api/epics/:id          ->  patch
+ * DELETE  /api/epics/:id          ->  destroy
  */
 
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Project, Epic } from '../../sqldb';
+import {Epic} from '../../sqldb';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -37,16 +36,16 @@ function patchUpdates(patches) {
   };
 }
 
-function removeEntity(res) {
-  return function(entity) {
-    if(entity) {
-      return entity.destroy()
-        .then(() => {
-          res.status(204).end();
-        });
-    }
-  };
-}
+// function removeEntity(res) {
+//   return function(entity) {
+//     if(entity) {
+//       return entity.destroy()
+//         .then(() => {
+//           res.status(204).end();
+//         });
+//     }
+//   };
+// }
 
 function handleEntityNotFound(res) {
   return function(entity) {
@@ -65,9 +64,9 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Projects
+// Gets a list of Epics
 export function index(req, res) {
-  return Project.findAll({
+  return Epic.findAll({
     where: {
       active: true
     }
@@ -76,9 +75,9 @@ export function index(req, res) {
     .catch(handleError(res));
 }
 
-// Gets a single Project from the DB
+// Gets a single Epic from the DB
 export function show(req, res) {
-  return Project.find({
+  return Epic.find({
     where: {
       _id: req.params.id
     }
@@ -88,38 +87,46 @@ export function show(req, res) {
     .catch(handleError(res));
 }
 
-// Creates a new Project in the DB
+// Creates a new Epic in the DB
 export function create(req, res) {
-  if(!req.body.UserId) {
-    return handleError(res)(new Error('UserId is required'));
+  if(!req.body.ProjectId) {
+    return handleError(res)(new Error('ProjectId is required'));
   }
-  return Project.create(req.body)
+  return Epic
+    .count({
+      where: {
+        ProjectId: req.body.ProjectId
+      }
+    })
+    .then(count => {
+      req.body.code = `E${count + 1}`;
+      return Epic.create(req.body);
+    })
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Upserts the given Project in the DB at the specified ID
+// Upserts the given Epic in the DB at the specified ID
 export function upsert(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
 
-  return Project.upsert(req.body, {
+  return Epic.upsert(req.body, {
     where: {
       _id: req.params.id
     }
   })
-    .then(() => Project.findById(req.params.id))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Updates an existing Project in the DB
+// Updates an existing Epic in the DB
 export function patch(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
-  return Project.find({
+  return Epic.find({
     where: {
       _id: req.params.id
     }
@@ -130,26 +137,17 @@ export function patch(req, res) {
     .catch(handleError(res));
 }
 
-// Deletes a Project from the DB
+// Deletes a Epic from the DB
 export function destroy(req, res) {
-  return Project.find({
+  return Epic.find({
     where: {
       _id: req.params.id
     }
   })
     .then(handleEntityNotFound(res))
-    .then(removeEntity(res))
-    .catch(handleError(res));
-}
-
-// Gets all Epics of a Project from the DB
-export function epics(req, res) {
-  return Epic.findAll({
-    where: {
-      ProjectId: req.params.id,
-      active: true
-    }
-  })
+    .then(patchUpdates([
+      { op: 'replace', path: '/active', value: false }
+    ]))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
