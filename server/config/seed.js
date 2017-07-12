@@ -12,6 +12,8 @@ export default function seedDatabaseIfNeeded() {
     let Thing = sqldb.Thing;
     let User = sqldb.User;
     let Project = sqldb.Project;
+    let Epic = sqldb.User;
+    let Story = sqldb.User;
 
     Thing.destroy({ where: {} })
       .then(() => {
@@ -28,6 +30,14 @@ export default function seedDatabaseIfNeeded() {
     Project.destroy({ where: {} })
       .then(() => console.log('finished populating projects'))
       .catch(err => console.log('error populating projects', err));
+
+    Epic.destroy({ where: {} })
+      .then(() => console.log('finished populating epics'))
+      .catch(err => console.log('error populating epics', err));
+
+    Story.destroy({ where: {} })
+      .then(() => console.log('finished populating stories'))
+      .catch(err => console.log('error populating stories', err));
 
     return User.destroy({ where: {} })
       .then(() => User.bulkCreate([{

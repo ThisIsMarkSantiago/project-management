@@ -1,17 +1,17 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/epics              ->  index
- * POST    /api/epics              ->  create
- * GET     /api/epics/:id          ->  show
- * PUT     /api/epics/:id          ->  upsert
- * PATCH   /api/epics/:id          ->  patch
- * DELETE  /api/epics/:id          ->  destroy
+ * GET     /api/stories              ->  index
+ * POST    /api/stories              ->  create
+ * GET     /api/stories/:id          ->  show
+ * PUT     /api/stories/:id          ->  upsert
+ * PATCH   /api/stories/:id          ->  patch
+ * DELETE  /api/stories/:id          ->  destroy
  */
 
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Epic, Story } from '../../sqldb';
+import { Story } from '../../sqldb';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -64,9 +64,9 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Epics
+// Gets a list of Storys
 export function index(req, res) {
-  return Epic
+  return Story
     .findAll({
       where: {
         active: true
@@ -76,9 +76,9 @@ export function index(req, res) {
     .catch(handleError(res));
 }
 
-// Gets a single Epic from the DB
+// Gets a single Story from the DB
 export function show(req, res) {
-  return Epic
+  return Story
     .find({
       where: {
         _id: req.params.id
@@ -89,32 +89,32 @@ export function show(req, res) {
     .catch(handleError(res));
 }
 
-// Creates a new Epic in the DB
+// Creates a new Story in the DB
 export function create(req, res) {
-  if(!req.body.ProjectId) {
-    return handleError(res)(new Error('ProjectId is required'), 404);
+  if(!req.body.EpicId) {
+    return handleError(res)(new Error('EpicId is required'), 404);
   }
-  return Epic
+  return Story
     .count({
       where: {
-        ProjectId: req.body.ProjectId
+        EpicId: req.body.EpicId
       }
     })
     .then(count => {
-      req.body.code = `E${count + 1}`;
-      return Epic.create(req.body);
+      req.body.code = `S${count + 1}`;
+      return Story.create(req.body);
     })
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Upserts the given Epic in the DB at the specified ID
+// Upserts the given Story in the DB at the specified ID
 export function upsert(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
 
-  return Epic
+  return Story
     .upsert(req.body, {
       where: {
         _id: req.params.id
@@ -124,12 +124,12 @@ export function upsert(req, res) {
     .catch(handleError(res));
 }
 
-// Updates an existing Epic in the DB
+// Updates an existing Story in the DB
 export function patch(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
-  return Epic
+  return Story
     .find({
       where: {
         _id: req.params.id
@@ -141,9 +141,9 @@ export function patch(req, res) {
     .catch(handleError(res));
 }
 
-// Deletes a Epic from the DB
+// Deletes a Story from the DB
 export function destroy(req, res) {
-  return Epic
+  return Story
     .find({
       where: {
         _id: req.params.id
@@ -153,18 +153,7 @@ export function destroy(req, res) {
     .then(patchUpdates([
       { op: 'replace', path: '/active', value: false }
     ]))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
-}
-// Gets all Stories of an Epic from the DB
-export function stories(req, res) {
-  return Story
-    .findAll({
-      where: {
-        EpicId: req.params.id,
-        active: true
-      }
-    })
+    // .then(removeEntity(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

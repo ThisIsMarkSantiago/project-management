@@ -10,25 +10,33 @@
   <div class="row">
     <div class="col-xs-12">
       <div ui-tree>
+
+        <!-- PROJECTS -->
         <ol ui-tree-nodes="" ng-model="vm.projects">
           <li ng-repeat="project in vm.projects" ui-tree-node data-nodrag>
             <div ui-tree-handle>
               <a href="#" ng-click="toggle(this); vm.getEpics(project, collapsed);" ng-if="!project.epics || project.epics.length">
-                <i class="glyphicon glyphicon-menu-right"></i>
+                <i class="glyphicon"
+                  ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
+                </i>
               </a>
               {{ project.name }}
               <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openEpicForm(project, { ProjectId: vm.project._id })">
                 <b> E </b>
               </button>
             </div>
-            <ol ui-tree-nodes="" ng-model="project.epics" ng-class="{hidden: collapsed}">
+
+            <!-- EPICS -->
+            <ol ui-tree-nodes="" ng-model="project.epics" ng-class="{ hidden: collapsed }">
               <li ng-repeat="epic in project.epics" ui-tree-node data-nodrag>
                 <div ui-tree-handle>
-                  <a href="#" ng-click="toggle(this)" ng-if="!epic.stories || epic.stories.length">
-                    <i class="glyphicon glyphicon-menu-right"></i>
+                  <a href="#" ng-click="toggle(this); vm.getStories(epic, collapsed);" ng-if="!epic.stories || epic.stories.length">
+                    <i class="glyphicon"
+                      ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
+                    </i>
                   </a>
                   {{ epic.code }} - {{ epic.name }}
-                  <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openEpicForm(project, { ProjectId: vm.project._id })">
+                  <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openStoryForm(epic, { EpicId: epic._id })">
                     <b> S </b>
                   </button>
                   <button class="btn btn-xs btn-default" type="button" ng-click="vm.openEpicForm(project, epic, true)">
@@ -41,10 +49,41 @@
                     <i class="glyphicon glyphicon-trash"></i>
                   </button>
                 </div>
+
+                <!-- STORIES -->
+                <ol ui-tree-nodes="" ng-model="epic.stories" ng-class="{ hidden: collapsed }">
+                  <li ng-repeat="story in epic.stories" ui-tree-node data-nodrag>
+                    <div ui-tree-handle>
+                      <a href="#" ng-click="toggle(this); vm.getAssertions(story, collapsed);" ng-if="!story.assertions || story.assertions.length">
+                        <i class="glyphicon"
+                          ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
+                        </i>
+                      </a>
+                      {{ story.code }} - {{ story.name }}
+                      <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openAssertionForm(story, { StoryId: story._id })">
+                        <b> A </b>
+                      </button>
+                      <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openMockupForm(story, { StoryId: story._id })">
+                        <b> M </b>
+                      </button>
+                      <button class="btn btn-xs btn-default" type="button" ng-click="vm.openStoryForm(epic, story, true)">
+                        <i class="glyphicon glyphicon-eye-open"></i>
+                      </button>
+                      <button class="btn btn-xs btn-success" type="button" ng-click="vm.openStoryForm(epic, story)">
+                        <i class="glyphicon glyphicon-pencil"></i>
+                      </button>
+                      <button class="btn btn-xs btn-danger" type="button" ng-click="vm.deleteStory(story.name, story, epic)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                      </button>
+                    </div>
+                  </li>
+                </ol>
               </li>
             </ol>
+
           </li>
         </ol>
+
       </div>
     </div>
   </div>

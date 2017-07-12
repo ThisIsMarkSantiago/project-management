@@ -108,17 +108,17 @@ export function Modal($rootScope, $uibModal) {
           errorModal = openModal({
             modal: {
               dismissable: true,
-              title: 'Success',
+              title: 'Error',
               html: `<p>${message}</p>`,
               buttons: [{
-                classes: 'btn-error',
+                classes: 'btn-danger',
                 text: 'Ok',
                 click(e) {
                   errorModal.close(e);
                 }
               }]
             }
-          }, 'modal-error');
+          }, 'modal-danger');
 
           errorModal.result.then(function(event) {
             Reflect.apply(error, event, slicedArgs);
