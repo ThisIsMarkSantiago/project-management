@@ -1,19 +1,18 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/stories                ->  index
- * POST    /api/stories                ->  create
- * GET     /api/stories/:id            ->  show
- * GET     /api/stories/:id/assertions ->  assertions
- * GET     /api/stories/:id/mockups    ->  mockups
- * PUT     /api/stories/:id            ->  upsert
- * PATCH   /api/stories/:id            ->  patch
- * DELETE  /api/stories/:id            ->  destroy
+ * GET     /api/mockups              ->  index
+ * POST    /api/mockups              ->  create
+ * GET     /api/mockups/:id          ->  show
+ * PUT     /api/mockups/:id          ->  upsert
+ * PATCH   /api/mockups/:id          ->  patch
+ * DELETE  /api/mockups/:id          ->  destroy
  */
 
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Story, Assertion, Mockup } from '../../sqldb';
+import { Mockup } from '../../sqldb';
+import base64 from 'base64-img';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -66,9 +65,9 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Storys
+// Gets a list of Mockups
 export function index(req, res) {
-  return Story
+  return Mockup
     .findAll({
       where: {
         active: true
@@ -78,9 +77,9 @@ export function index(req, res) {
     .catch(handleError(res));
 }
 
-// Gets a single Story from the DB
+// Gets a single Mockup from the DB
 export function show(req, res) {
-  return Story
+  return Mockup
     .find({
       where: {
         _id: req.params.id
@@ -91,32 +90,44 @@ export function show(req, res) {
     .catch(handleError(res));
 }
 
-// Creates a new Story in the DB
+// Creates a new Mockup in the DB
 export function create(req, res) {
-  if(!req.body.EpicId) {
-    return handleError(res)(new Error('EpicId is required'), 404);
+  if(!req.body.StoryId) {
+    return handleError(res)(new Error('StoryId is required'), 404);
   }
-  return Story
-    .count({
-      where: {
-        EpicId: req.body.EpicId
-      }
-    })
-    .then(count => {
-      req.body.code = `S${count + 1}`;
-      return Story.create(req.body);
-    })
-    .then(respondWithResult(res, 201))
-    .catch(handleError(res));
+
+  if(!req.body.image) {
+    return handleError(res)(new Error('Image is required'), 404);
+  }
+
+  return base64.img(req.body.image, 'client/images/', (new Date()).toISOString(), (error, imagePath) => {
+    if(error) {
+      return handleError(res)(error);
+    }
+    delete req.body.image;
+    req.body.imagePath = imagePath.replace('client/', '');
+    return Mockup
+      .count({
+        where: {
+          StoryId: req.body.StoryId
+        }
+      })
+      .then(count => {
+        req.body.code = `M${count + 1}`;
+        return Mockup.create(req.body);
+      })
+      .then(respondWithResult(res, 201))
+      .catch(handleError(res));
+  });
 }
 
-// Upserts the given Story in the DB at the specified ID
+// Upserts the given Mockup in the DB at the specified ID
 export function upsert(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
 
-  return Story
+  return Mockup
     .upsert(req.body, {
       where: {
         _id: req.params.id
@@ -126,26 +137,40 @@ export function upsert(req, res) {
     .catch(handleError(res));
 }
 
-// Updates an existing Story in the DB
+// Updates an existing Mockup in the DB
 export function patch(req, res) {
   if(req.body._id) {
     Reflect.deleteProperty(req.body, '_id');
   }
-  return Story
-    .find({
-      where: {
-        _id: req.params.id
-      }
-    })
-    .then(handleEntityNotFound(res))
-    .then(patchUpdates(req.body))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+  const image = req.body.filter(patchUpdate => patchUpdate.path === '/image')[0];
+  const applyPatch = () => {
+    Mockup
+      .find({
+        where: {
+          _id: req.params.id
+        }
+      })
+      .then(handleEntityNotFound(res))
+      .then(patchUpdates(req.body))
+      .then(respondWithResult(res))
+      .catch(handleError(res));
+  };
+  if(!image) {
+    return applyPatch();
+  }
+  return base64.img(image.value, 'client/images/', (new Date()).toISOString(), (error, imagePath) => {
+    if(error) {
+      return handleError(res)(error);
+    }
+    req.body.splice(req.body.indexOf(image), 1);
+    req.body.push({ op: 'replace', path: '/imagePath', value: imagePath.replace('client/', '') });
+    applyPatch();
+  });
 }
 
-// Deletes a Story from the DB
+// Deletes a Mockup from the DB
 export function destroy(req, res) {
-  return Story
+  return Mockup
     .find({
       where: {
         _id: req.params.id
@@ -155,33 +180,7 @@ export function destroy(req, res) {
     .then(patchUpdates([
       { op: 'replace', path: '/active', value: false }
     ]))
+    .then(respondWithResult(res))
     // .then(removeEntity(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
-}
-
-// Gets all Assertions of a Story from the DB
-export function assertions(req, res) {
-  return Assertion
-    .findAll({
-      where: {
-        StoryId: req.params.id,
-        active: true
-      }
-    })
-    .then(respondWithResult(res))
-    .catch(handleError(res));
-}
-
-// Gets all Mockups of a Story from the DB
-export function mockups(req, res) {
-  return Mockup
-    .findAll({
-      where: {
-        StoryId: req.params.id,
-        active: true
-      }
-    })
-    .then(respondWithResult(res))
     .catch(handleError(res));
 }

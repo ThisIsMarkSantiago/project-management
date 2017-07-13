@@ -54,7 +54,7 @@
                 <ol ui-tree-nodes="" ng-model="epic.stories" ng-class="{ hidden: collapsed }">
                   <li ng-repeat="story in epic.stories" ui-tree-node data-nodrag>
                     <div ui-tree-handle>
-                      <a href="#" ng-click="toggle(this); vm.getAssertions(story, collapsed);">
+                      <a href="#" ng-click="toggle(this); vm.getAssertions(story, collapsed); vm.getMockups(story, collapsed)">
                         <i class="glyphicon"
                           ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
                         </i>
@@ -63,7 +63,7 @@
                       <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openAssertionForm(epic, story, { StoryId: story._id })">
                         <b> A </b>
                       </button>
-                      <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openMockupForm(story, { StoryId: story._id })">
+                      <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openMockupForm(epic, story, { StoryId: story._id })">
                         <b> M </b>
                       </button>
                       <button class="btn btn-xs btn-default" type="button" ng-click="vm.openStoryForm(epic, story, true)">
@@ -89,6 +89,31 @@
                             <i class="glyphicon glyphicon-pencil"></i>
                           </button>
                           <button class="btn btn-xs btn-danger" type="button" ng-click="vm.deleteAssertion(assertion.info, assertion, story)">
+                            <i class="glyphicon glyphicon-trash"></i>
+                          </button>
+                        </div>
+                      </li>
+                    </ol>
+
+                    <!-- MOCKUPS -->
+                    <ol ui-tree-nodes="" ng-model="story.mockups" ng-class="{ hidden: collapsed }">
+                      <li ng-repeat="mockup in story.mockups" ui-tree-node data-nodrag>
+                        <div ui-tree-handle class="mockups">
+                          <a href="#" ng-click="toggle(this); vm.getInteractions(mockup, collapsed);">
+                            <i class="glyphicon"
+                              ng-class="{ 'glyphicon-menu-right': collapsed, 'glyphicon-menu-down': !collapsed }">
+                            </i>
+                          </a>
+                          {{ mockup.code }} -
+                          <img ng-src="{{ mockup.imagePath }}" alt="Image not found"
+                            onerror="this.onerror=null; this.src='/assets/images/image-placeholder.jpg';" height="100px" />
+                          <button class="btn btn-xs btn-default" type="button" ng-click="vm.openMockupForm(story, story, mockup, true)">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                          </button>
+                          <button class="btn btn-xs btn-success" type="button" ng-click="vm.openMockupForm(story, story, mockup)">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                          </button>
+                          <button class="btn btn-xs btn-danger" type="button" ng-click="vm.deleteMockup(mockup.code + ' mockup', mockup, story)">
                             <i class="glyphicon glyphicon-trash"></i>
                           </button>
                         </div>

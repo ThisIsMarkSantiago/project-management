@@ -1,15 +1,15 @@
 /**
- * Assertion model events
+ * Mockup model events
  */
 
 'use strict';
 
 import {EventEmitter} from 'events';
-var Assertion = require('../../sqldb').Assertion;
-var AssertionEvents = new EventEmitter();
+var Mockup = require('../../sqldb').Mockup;
+var MockupEvents = new EventEmitter();
 
 // Set max event listeners (0 == unlimited)
-AssertionEvents.setMaxListeners(0);
+MockupEvents.setMaxListeners(0);
 
 // Model events
 var events = {
@@ -22,17 +22,17 @@ var events = {
 function registerEvents() {
   for(var e in events) {
     let event = events[e];
-    Assertion.hook(e, emitEvent(event));
+    Mockup.hook(e, emitEvent(event));
   }
 }
 
 function emitEvent(event) {
   return function(doc, options, done) {
-    AssertionEvents.emit(`${event}:${doc._id}`, doc);
-    AssertionEvents.emit(event, doc);
+    MockupEvents.emit(`${event}:${doc._id}`, doc);
+    MockupEvents.emit(event, doc);
     done(null);
   };
 }
 
 registerEvents();
-export default AssertionEvents;
+export default MockupEvents;

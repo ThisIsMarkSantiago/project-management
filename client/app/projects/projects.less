@@ -1,5 +1,20 @@
 #projects {
   [ui-tree-handle] {
     height: 30px;
+    cursor: default;
+
+    &.mockups {
+      height: 100px;
+      margin: 3px 0px;
+    }
+    > a {
+      cursor: pointer;
+    }
+  }
+}
+
+form[name="mockupForm"] {
+  .image-select {
+    cursor: pointer;
   }
 }

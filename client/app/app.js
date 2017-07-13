@@ -9,6 +9,7 @@ import ngSanitize from 'angular-sanitize';
 import 'angular-socket-io';
 
 import uiRouter from 'angular-ui-router';
+import ngFileUpload from 'ng-file-upload';
 import uiTree from 'angular-ui-tree';
 import uiBootstrap from 'angular-ui-bootstrap';
 import 'angular-validation-match';
@@ -30,9 +31,26 @@ import socket from '../components/socket/socket.service';
 
 import './app.less';
 
-angular.module('projectManagementApp', [ngCookies, ngResource, ngSanitize, 'btford.socket-io',
-  uiRouter, uiTree, uiBootstrap, _Auth, account, admin, 'validation.match', navbar, footer, main, projects,
-  constants, socket, util
+angular.module('projectManagementApp', [
+  ngCookies,
+  ngResource,
+  ngSanitize,
+  'btford.socket-io',
+  uiRouter,
+  ngFileUpload,
+  uiTree,
+  uiBootstrap,
+  _Auth,
+  account,
+  admin,
+  'validation.match',
+  navbar,
+  footer,
+  main,
+  projects,
+  constants,
+  socket,
+  util
 ])
   .config(routeConfig)
   .config(['treeConfig', function(treeConfig) {
