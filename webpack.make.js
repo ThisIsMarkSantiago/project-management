@@ -52,6 +52,7 @@ module.exports = function makeWebpackConfig(options) {
                 'angular-ui-bootstrap',
                 'angular-ui-router',
                 'angular-ui-tree',
+                'ng-file-upload',
                 'lodash'
             ]
         };

@@ -16,6 +16,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/mockup/mockup.socket').register(socket);
   require('../api/assertion/assertion.socket').register(socket);
   require('../api/story/story.socket').register(socket);
   require('../api/epic/epic.socket').register(socket);

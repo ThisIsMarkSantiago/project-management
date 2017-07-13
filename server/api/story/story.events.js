@@ -28,7 +28,7 @@ function registerEvents() {
 
 function emitEvent(event) {
   return function(doc, options, done) {
-    StoryEvents.emit(event + ':' + doc._id, doc);
+    StoryEvents.emit(`${event}:${doc._id}`, doc);
     StoryEvents.emit(event, doc);
     done(null);
   };
