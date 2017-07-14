@@ -149,7 +149,13 @@ export function patch(req, res) {
       .find({
         where: {
           _id: req.params.id
-        }
+        },
+        include: [{
+          model: Interaction,
+          as: 'interactions',
+          where: { active: true },
+          required: false
+        }]
       })
       .then(handleEntityNotFound(res))
       .then(patchUpdates(req.body))

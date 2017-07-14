@@ -13,7 +13,7 @@
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Story, Assertion, Mockup } from '../../sqldb';
+import { Story, Assertion, Mockup, Interaction } from '../../sqldb';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -62,6 +62,7 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
+    console.log(err)
     res.status(statusCode).send(err);
   };
 }
@@ -135,7 +136,19 @@ export function patch(req, res) {
     .find({
       where: {
         _id: req.params.id
-      }
+      },
+      include: [{
+        model: Mockup,
+        as: 'mockups',
+        where: { active: true },
+        required: false,
+        include: [{
+          model: Interaction,
+          as: 'interactions',
+          where: { active: true },
+          required: false
+        }]
+      }]
     })
     .then(handleEntityNotFound(res))
     .then(patchUpdates(req.body))
@@ -175,12 +188,19 @@ export function assertions(req, res) {
 
 // Gets all Mockups of a Story from the DB
 export function mockups(req, res) {
+  console.log('Interaction', Interaction)
   return Mockup
     .findAll({
       where: {
         StoryId: req.params.id,
         active: true
-      }
+      },
+      include: [{
+        model: Interaction,
+        as: 'interactions',
+        where: { active: true },
+        required: false
+      }]
     })
     .then(respondWithResult(res))
     .catch(handleError(res));
