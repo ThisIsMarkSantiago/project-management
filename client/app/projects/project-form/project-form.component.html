@@ -13,7 +13,7 @@
     <div class="form-group" ng-class="{ 'has-error': projectForm.info.$invalid && projectForm.info.$touched }">
       <label class="control-label" for="info"> Description </label>
       <textarea type="text" aria-describedby="required-info"
-        id="info" class="form-control"
+        id="info" class="form-control" name="info"
         ng-model="vm.project.info" required></textarea>
       <span id="required-info" class="help-block" ng-show="projectForm.info.$error.required && projectForm.info.$touched"> Please provide description of the project </span>
     </div>

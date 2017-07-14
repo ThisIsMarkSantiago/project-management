@@ -14,7 +14,7 @@
     <div class="form-group" ng-class="{ 'has-error': assertionForm.info.$invalid && assertionForm.info.$touched }">
       <label class="control-label" for="info"> Description </label>
       <textarea type="text" aria-describedby="required-info"
-        id="info" class="form-control"
+        id="info" class="form-control" name="info"
         ng-model="vm.assertion.info" required ng-readonly="vm.viewMode"></textarea>
       <span id="required-info" class="help-block" ng-show="assertionForm.info.$error.required && assertionForm.info.$touched"> Please provide description of the assertion </span>
     </div>

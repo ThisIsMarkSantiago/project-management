@@ -14,7 +14,7 @@ export class EpicFormComponent {
   }
 }
 
-export default angular.module('epicsApp.epics.form', [])
+export default angular.module('projectManagementApp.epics.form', [])
   .component('epicForm', {
     template: require('./epic-form.component.html'),
     bindings: {

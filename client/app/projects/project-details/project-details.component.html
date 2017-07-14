@@ -107,16 +107,38 @@
                           {{ mockup.code }} -
                           <img ng-src="{{ mockup.imagePath }}" alt="Image not found"
                             onerror="this.onerror=null; this.src='/assets/images/image-placeholder.jpg';" height="100px" />
-                          <button class="btn btn-xs btn-default" type="button" ng-click="vm.openMockupForm(story, story, mockup, true)">
+                          <button class="btn btn-xs btn-primary" type="button" ng-click="vm.openInteractionForm(epic, story, mockup, { MockupId: mockup._id })">
+                            <b> I </b>
+                          </button>
+                          <button class="btn btn-xs btn-default" type="button" ng-click="vm.openMockupForm(epic, story, mockup, true)">
                             <i class="glyphicon glyphicon-eye-open"></i>
                           </button>
-                          <button class="btn btn-xs btn-success" type="button" ng-click="vm.openMockupForm(story, story, mockup)">
+                          <button class="btn btn-xs btn-success" type="button" ng-click="vm.openMockupForm(epic, story, mockup)">
                             <i class="glyphicon glyphicon-pencil"></i>
                           </button>
                           <button class="btn btn-xs btn-danger" type="button" ng-click="vm.deleteMockup(mockup.code + ' mockup', mockup, story)">
                             <i class="glyphicon glyphicon-trash"></i>
                           </button>
                         </div>
+
+                        <!-- INTERACTIONS -->
+                        <ol ui-tree-nodes="" ng-model="mockup.interactions" ng-class="{ hidden: collapsed }">
+                          <li ng-repeat="interaction in mockup.interactions" ui-tree-node data-nodrag>
+                            <div ui-tree-handle class="interactions">
+                              {{ interaction.code }} - {{ interaction.action }} {{ interaction.target }}
+                              <button class="btn btn-xs btn-default" type="button" ng-click="vm.openInteractionForm(epic, story, mockup, interaction, true)">
+                                <i class="glyphicon glyphicon-eye-open"></i>
+                              </button>
+                              <button class="btn btn-xs btn-success" type="button" ng-click="vm.openInteractionForm(epic, story, mockup, interaction)">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                              </button>
+                              <button class="btn btn-xs btn-danger" type="button" ng-click="vm.deleteInteraction(interaction.action + ' ' + interaction.target, interaction, mockup)">
+                                <i class="glyphicon glyphicon-trash"></i>
+                              </button>
+                            </div>
+                          </li>
+                        </ol>
+
                       </li>
                     </ol>
 

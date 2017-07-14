@@ -19,9 +19,10 @@
           alt="Image not found"
           onerror="this.onerror=null; this.src='/assets/images/image-placeholder.jpg';"
           ngf-select ng-model="vm.mockup.file"
+          ng-disabled="vm.viewMode"
           ngf-pattern="'image/*'" ngf-accept="'image/*'"
           width="100%" class="image-select" />
-        <span class="text-danger" ng-bind="vm.imageError"></span>
+        <span class="text-danger" ng-hide="vm.mockup.file" ng-bind="vm.imageError"></span>
       </div>
     </div>
     <h5>
@@ -34,13 +35,13 @@
             <label class="control-label" for="url"> URL </label>
             <input type="text" name="url" aria-describedby="required-url"
               id="url" class="form-control"
-              ng-model="vm.mockup.url" required  ng-readonly="vm.viewMode"/>
+              ng-model="vm.mockup.url" required ng-readonly="vm.viewMode"/>
             <span id="required-url" class="help-block" ng-show="mockupForm.url.$error.required && mockupForm.url.$touched"> Please provide url for the mockup </span>
           </div>
           <div class="form-group" ng-class="{ 'has-error': mockupForm.raw.$invalid && mockupForm.raw.$touched }">
             <label class="control-label" for="raw"> Raw </label>
             <textarea type="text" aria-describedby="required-raw"
-              id="raw" class="form-control"
+              id="raw" class="form-control" name="raw"
               ng-model="vm.mockup.raw" required ng-readonly="vm.viewMode"></textarea>
             <span id="required-raw" class="help-block" ng-show="mockupForm.raw.$error.required && mockupForm.raw.$touched"> Please provide raw data of the mockup </span>
           </div>

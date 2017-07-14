@@ -72,7 +72,7 @@ export class ProjectsComponent {
   }
 }
 
-export default angular.module('projectsApp.projects', [uiRouter, form, details, ModalService])
+export default angular.module('projectManagementApp.projects', [uiRouter, form, details, ModalService])
   .config(routes)
   .component('projects', {
     template: require('./projects.html'),

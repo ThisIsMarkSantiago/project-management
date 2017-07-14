@@ -14,7 +14,7 @@ export class ProjectFormComponent {
   }
 }
 
-export default angular.module('projectsApp.projects.form', [])
+export default angular.module('projectManagementApp.projects.form', [])
   .component('projectForm', {
     template: require('./project-form.component.html'),
     bindings: {

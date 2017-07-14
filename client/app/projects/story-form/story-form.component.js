@@ -4,9 +4,7 @@ const angular = require('angular');
 export class StoryFormComponent {
   /*@ngInject*/
   $onInit() {
-    this.story = this.resolve.story;
-    this.epic = this.resolve.epic;
-    this.viewMode = this.resolve.viewMode;
+    angular.extend(this, this.resolve);
   }
 
   save(form) {
@@ -16,7 +14,7 @@ export class StoryFormComponent {
   }
 }
 
-export default angular.module('storysApp.storys.form', [])
+export default angular.module('projectManagementApp.storys.form', [])
   .component('storyForm', {
     template: require('./story-form.component.html'),
     bindings: {

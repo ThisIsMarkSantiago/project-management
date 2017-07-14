@@ -5,19 +5,19 @@ import epicForm from '../epic-form/epic-form.component';
 import storyForm from '../story-form/story-form.component';
 import assertionForm from '../assertion-form/assertion-form.component';
 import mockupForm from '../mockup-form/mockup-form.component';
+import interactionForm from '../interaction-form/interaction-form.component';
 
 export class projectDetailsComponent {
   project;
   tree = [];
 
   /*@ngInject*/
-  constructor($state, $http, $uibModal, Modal, $filter) {
+  constructor($state, $http, $uibModal, Modal) {
     angular.extend(this, {
       $state,
       $http,
       $uibModal,
-      Modal,
-      $filter
+      Modal
     });
   }
 
@@ -38,7 +38,7 @@ export class projectDetailsComponent {
     const generateDeleteMethod = (model, pluralModel, successText) => {
       return this.Modal.confirm.delete((entity, parent) => {
         this.$http
-          .delete(`/api/${model}s/${entity._id}`)
+          .delete(`/api/${pluralModel}/${entity._id}`)
           .then(() => {
             this.Modal.alert.success()(successText);
             parent[pluralModel].splice(parent[pluralModel].indexOf(entity), 1);
@@ -49,8 +49,9 @@ export class projectDetailsComponent {
 
     this.deleteEpic = generateDeleteMethod('epic', 'epics', 'Epic successfully deleted!');
     this.deleteStory = generateDeleteMethod('story', 'stories', 'Story successfully deleted!');
-    this.deleteAssertion = generateDeleteMethod('assertion', 'assertion', 'Assertion successfully deleted!');
+    this.deleteAssertion = generateDeleteMethod('assertion', 'assertions', 'Assertion successfully deleted!');
     this.deleteMockup = generateDeleteMethod('mockup', 'mockups', 'Mockup successfully deleted!');
+    this.deleteInteraction = generateDeleteMethod('interaction', 'interactions', 'Interaction successfully deleted!');
   }
 
   getEpics(project, collapased) {
@@ -212,13 +213,16 @@ export class projectDetailsComponent {
     modalInstance
       .result
       .then(result => {
+        const updates = [
+          { op: 'replace', path: '/url', value: result.url },
+          { op: 'replace', path: '/raw', value: result.raw }
+        ];
+        if(result.image) {
+          updates.push({ op: 'replace', path: '/image', value: result.image });
+        }
         this.$http[result._id ? 'patch' : 'post'](
             `/api/mockups/${result._id || ''}`,
-            result._id ? [
-              { op: 'replace', path: '/url', value: result.url },
-              { op: 'replace', path: '/raw', value: result.raw },
-              { op: 'replace', path: '/image', value: result.image }
-            ] : result
+            !result._id ? result : updates
           )
           .then(response => {
             this.Modal.alert.success()(`Mockup successfully ${result._id ? 'upd' : 'cre'}ated!`);
@@ -233,9 +237,63 @@ export class projectDetailsComponent {
           .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the mockup!`));
       });
   }
+
+  getInteractions(mockup, collapased) {
+    if(!collapased) {
+      this.$http.get(`/api/mockups/${mockup._id}/interactions`)
+        .then(result => {
+          mockup.interactions = result.data;
+          return result.data;
+        });
+    }
+  }
+
+  openInteractionForm(epic, story, mockup, interaction, viewMode) {
+    const modalInstance = this.$uibModal
+      .open({
+        component: 'interactionForm',
+        resolve: {
+          interaction: () => angular.copy(interaction, {}),
+          epic: () => angular.copy(epic, {}),
+          story: () => angular.copy(story, {}),
+          mockup: () => angular.copy(mockup, {}),
+          viewMode
+        }
+      });
+
+    modalInstance
+      .result
+      .then(result => {
+        this.$http[result._id ? 'patch' : 'post'](
+            `/api/interactions/${result._id || ''}`,
+            result._id ? [
+              { op: 'replace', path: '/action', value: result.action },
+              { op: 'replace', path: '/target', value: result.target },
+              { op: 'replace', path: '/outcome', value: result.outcome }
+            ] : result
+          )
+          .then(response => {
+            this.Modal.alert.success()(`Interaction successfully ${result._id ? 'upd' : 'cre'}ated!`);
+            if(mockup.interactions) {
+              if(result._id) {
+                mockup.interactions[mockup.interactions.indexOf(interaction)] = response.data;
+              } else {
+                mockup.interactions.push(response.data);
+              }
+            }
+          })
+          .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the mockup!`));
+      });
+  }
 }
 
-export default angular.module('projectManagementApp.projects.details', [epicForm, storyForm, assertionForm, mockupForm])
+export default angular.module('projectManagementApp.projects.details', [
+    epicForm,
+    storyForm,
+    assertionForm,
+    mockupForm,
+    interactionForm
+  ])
   .component('projectDetails', {
     template: require('./project-details.component.html'),
     controller: projectDetailsComponent,

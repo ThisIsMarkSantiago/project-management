@@ -1,17 +1,18 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/mockups              ->  index
- * POST    /api/mockups              ->  create
- * GET     /api/mockups/:id          ->  show
- * PUT     /api/mockups/:id          ->  upsert
- * PATCH   /api/mockups/:id          ->  patch
- * DELETE  /api/mockups/:id          ->  destroy
+ * GET     /api/mockups                  ->  index
+ * POST    /api/mockups                  ->  create
+ * GET     /api/mockups/:id              ->  show
+ * GET     /api/mockups/:id/interactions ->  interactions
+ * PUT     /api/mockups/:id              ->  upsert
+ * PATCH   /api/mockups/:id              ->  patch
+ * DELETE  /api/mockups/:id              ->  destroy
  */
 
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Mockup } from '../../sqldb';
+import { Mockup, Interaction } from '../../sqldb';
 import base64 from 'base64-img';
 
 function respondWithResult(res, statusCode) {
@@ -182,5 +183,18 @@ export function destroy(req, res) {
     ]))
     .then(respondWithResult(res))
     // .then(removeEntity(res))
+    .catch(handleError(res));
+}
+
+// Gets all Interactions of a Mockup from the DB
+export function interactions(req, res) {
+  return Interaction
+    .findAll({
+      where: {
+        MockupId: req.params.id,
+        active: true
+      }
+    })
+    .then(respondWithResult(res))
     .catch(handleError(res));
 }

@@ -14,7 +14,7 @@ export class AssertionFormComponent {
   }
 }
 
-export default angular.module('assertionsApp.assertions.form', [])
+export default angular.module('projectManagementApp.assertions.form', [])
   .component('assertionForm', {
     template: require('./assertion-form.component.html'),
     bindings: {
