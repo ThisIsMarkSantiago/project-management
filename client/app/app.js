@@ -54,7 +54,7 @@ angular.module('projectManagementApp', [
 ])
   .config(routeConfig)
   .config(['treeConfig', function(treeConfig) {
-    treeConfig.defaultCollapsed = true;
+    treeConfig.defaultCollapsed = false;
   }])
   .run(function($rootScope, $location, Auth) {
     'ngInject';

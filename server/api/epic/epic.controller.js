@@ -12,7 +12,7 @@
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Epic, Story } from '../../sqldb';
+import { Epic, Story, Mockup, Interaction } from '../../sqldb';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -134,7 +134,25 @@ export function patch(req, res) {
     .find({
       where: {
         _id: req.params.id
-      }
+      },
+      include: [{
+        model: Story,
+        as: 'stories',
+        where: { active: true },
+        required: false,
+        include: [{
+          model: Mockup,
+          as: 'mockups',
+          where: { active: true },
+          required: false,
+          include: [{
+            model: Interaction,
+            as: 'interactions',
+            where: { active: true },
+            required: false
+          }]
+        }]
+      }]
     })
     .then(handleEntityNotFound(res))
     .then(patchUpdates(req.body))
@@ -165,7 +183,19 @@ export function stories(req, res) {
       where: {
         EpicId: req.params.id,
         active: true
-      }
+      },
+      include: [{
+        model: Mockup,
+        as: 'mockups',
+        where: { active: true },
+        required: false,
+        include: [{
+          model: Interaction,
+          as: 'interactions',
+          where: { active: true },
+          required: false
+        }]
+      }]
     })
     .then(respondWithResult(res))
     .catch(handleError(res));

@@ -12,7 +12,7 @@
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Project, Epic } from '../../sqldb';
+import { Project, Epic, Story, Mockup, Interaction } from '../../sqldb';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -61,6 +61,7 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
+    console.log('err', err)
     res.status(statusCode).send(err);
   };
 }
@@ -81,7 +82,31 @@ export function show(req, res) {
   return Project.find({
     where: {
       _id: req.params.id
-    }
+    },
+    include: [{
+      model: Epic,
+      as: 'epics',
+      where: { active: true },
+      required: false,
+      include: [{
+        model: Story,
+        as: 'stories',
+        where: { active: true },
+        required: false,
+        include: [{
+          model: Mockup,
+          as: 'mockups',
+          where: { active: true },
+          required: false,
+          include: [{
+            model: Interaction,
+            as: 'interactions',
+            where: { active: true },
+            required: false
+          }]
+        }]
+      }]
+    }]
   })
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
@@ -148,7 +173,25 @@ export function epics(req, res) {
     where: {
       ProjectId: req.params.id,
       active: true
-    }
+    },
+    include: [{
+      model: Story,
+      as: 'stories',
+      where: { active: true },
+      required: false,
+      include: [{
+        model: Mockup,
+        as: 'mockups',
+        where: { active: true },
+        required: false,
+        include: [{
+          model: Interaction,
+          as: 'interactions',
+          where: { active: true },
+          required: false
+        }]
+      }]
+    }]
   })
     .then(respondWithResult(res))
     .catch(handleError(res));
