@@ -9,9 +9,13 @@ export class MockupFormComponent {
 
   save(form) {
     if(form.$valid) {
-      if(!this.mockup.file) {
+      delete this.imageError;
+      if(!this.mockup._id && !this.mockup.file) {
         this.imageError = 'Image is required!';
         return;
+      }
+      if(!this.mockup.file) {
+        return this.close({ $value: this.mockup });
       }
       var reader = new window.FileReader();
       reader.readAsDataURL(this.mockup.file);
@@ -27,7 +31,7 @@ export class MockupFormComponent {
   }
 }
 
-export default angular.module('mockupsApp.mockups.form', [])
+export default angular.module('projectManagementApp.mockups.form', [])
   .component('mockupForm', {
     template: require('./mockup-form.component.html'),
     bindings: {

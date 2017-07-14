@@ -21,6 +21,7 @@ db.Epic = db.sequelize.import('../api/epic/epic.model');
 db.Story = db.sequelize.import('../api/story/story.model');
 db.Assertion = db.sequelize.import('../api/assertion/assertion.model');
 db.Mockup = db.sequelize.import('../api/mockup/mockup.model');
+db.Interaction = db.sequelize.import('../api/interaction/interaction.model');
 
 db.User.hasMany(db.Project);
 db.Project.belongsTo(db.User);
@@ -32,5 +33,7 @@ db.Story.hasMany(db.Assertion);
 db.Assertion.belongsTo(db.Story);
 db.Story.hasMany(db.Mockup);
 db.Mockup.belongsTo(db.Story);
+db.Mockup.hasMany(db.Interaction);
+db.Interaction.belongsTo(db.Mockup);
 
 module.exports = db;

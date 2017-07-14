@@ -13,7 +13,7 @@
     <div class="form-group" ng-class="{ 'has-error': epicForm.info.$invalid && epicForm.info.$touched }">
       <label class="control-label" for="info"> Description </label>
       <textarea type="text" aria-describedby="required-info"
-        id="info" class="form-control"
+        id="info" class="form-control" name="info"
         ng-model="vm.epic.info" required ng-readonly="vm.viewMode"></textarea>
       <span id="required-info" class="help-block" ng-show="epicForm.info.$error.required && epicForm.info.$touched"> Please provide description of the epic </span>
     </div>

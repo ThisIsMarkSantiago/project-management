@@ -17,7 +17,7 @@
     <div class="form-group" ng-class="{ 'has-error': storyForm.info.$invalid && storyForm.info.$touched }">
       <label class="control-label" for="info"> Narration </label>
       <textarea type="text" aria-describedby="required-info"
-        id="info" class="form-control"
+        id="info" class="form-control" name="narration"
         ng-model="vm.story.info" required ng-readonly="vm.viewMode"></textarea>
       <span id="required-info" class="help-block" ng-show="storyForm.info.$error.required && storyForm.info.$touched"> Please provide narration of the story </span>
     </div>

@@ -15,6 +15,8 @@ export default function seedDatabaseIfNeeded() {
     let Epic = sqldb.Epic;
     let Story = sqldb.Story;
     let Assertion = sqldb.Assertion;
+    let Mockup = sqldb.Mockup;
+    let Interaction = sqldb.Interaction;
 
     Thing.destroy({ where: {} })
       .then(() => {
@@ -44,12 +46,20 @@ export default function seedDatabaseIfNeeded() {
       .then(() => console.log('finished populating assertions'))
       .catch(err => console.log('error populating assertions', err));
 
+    Mockup.destroy({ where: {} })
+      .then(() => console.log('finished populating mockups'))
+      .catch(err => console.log('error populating mockups', err));
+
+    Interaction.destroy({ where: {} })
+      .then(() => console.log('finished populating interactions'))
+      .catch(err => console.log('error populating interactions', err));
+
     return User.destroy({ where: {} })
       .then(() => User.bulkCreate([{
         provider: 'local',
         name: 'Test User',
         email: 'user@example.com',
-        password: 'test'
+        password: 'user'
       }, {
         provider: 'local',
         role: 'admin',
