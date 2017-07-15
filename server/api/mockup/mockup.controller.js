@@ -154,6 +154,7 @@ export function patch(req, res) {
           model: Interaction,
           as: 'interactions',
           where: { active: true },
+          order: [[{ model: Mockup, as: 'mockups' }, { model: Interaction, as: 'interactions' }, 'code', 'ASC']],
           required: false
         }]
       })
@@ -198,7 +199,8 @@ export function interactions(req, res) {
     .findAll({
       where: {
         MockupId: req.params.id,
-        active: true
+        active: true,
+        order: [[{ model: Interaction, as: 'interactions' }, 'code', 'ASC']],
       }
     })
     .then(respondWithResult(res))

@@ -140,13 +140,21 @@ export function patch(req, res) {
         model: Mockup,
         as: 'mockups',
         where: { active: true },
+        order: [[{ model: Story, as: 'stories' }, { model: Mockup, as: 'mockups' }, 'code', 'ASC']],
         required: false,
         include: [{
           model: Interaction,
           as: 'interactions',
           where: { active: true },
+          order: [[{ model: Story, as: 'stories' }, { model: Mockup, as: 'mockups' }, { model: Interaction, as: 'interactions' }, 'code', 'ASC']],
           required: false
         }]
+      }, {
+        model: Assertion,
+        as: 'assertions',
+        where: { active: true },
+        order: [[{ model: Story, as: 'stories' }, { model: Assertion, as: 'assertions' }, 'code', 'ASC']],
+        required: false
       }]
     })
     .then(handleEntityNotFound(res))
@@ -193,10 +201,12 @@ export function mockups(req, res) {
         StoryId: req.params.id,
         active: true
       },
+      order: [['code', 'ASC']],
       include: [{
         model: Interaction,
         as: 'interactions',
         where: { active: true },
+        order: [[{ model: Mockup, as: 'mockups' }, { model: Interaction, as: 'interactions' }, 'code', 'ASC']],
         required: false
       }]
     })

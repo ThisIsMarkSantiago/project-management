@@ -12,7 +12,7 @@
 'use strict';
 
 import jsonpatch from 'fast-json-patch';
-import { Epic, Story, Mockup, Interaction } from '../../sqldb';
+import { Epic, Story, Mockup, Assertion, Interaction } from '../../sqldb';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -139,18 +139,27 @@ export function patch(req, res) {
         model: Story,
         as: 'stories',
         where: { active: true },
+        order: [[{ model: Epic, as: 'epics' }, { model: Story, as: 'stories' }, 'code', 'DESC']],
         required: false,
         include: [{
           model: Mockup,
           as: 'mockups',
           where: { active: true },
+          order: [[{ model: Epic, as: 'epics' }, { model: Story, as: 'stories' }, { model: Mockup, as: 'mockups' }, 'code', 'ASC']],
           required: false,
           include: [{
             model: Interaction,
             as: 'interactions',
             where: { active: true },
+            order: [[{ model: Epic, as: 'epics' }, { model: Story, as: 'stories' }, { model: Mockup, as: 'mockups' }, { model: Interaction, as: 'interactions' }, 'code', 'ASC']],
             required: false
           }]
+        }, {
+          model: Assertion,
+          as: 'assertions',
+          where: { active: true },
+          order: [[{ model: Epic, as: 'epics' }, { model: Story, as: 'stories' }, { model: Assertion, as: 'assertions' }, 'code', 'ASC']],
+          required: false
         }]
       }]
     })
@@ -184,17 +193,26 @@ export function stories(req, res) {
         EpicId: req.params.id,
         active: true
       },
+      order: [['code', 'ASC']],
       include: [{
         model: Mockup,
         as: 'mockups',
         where: { active: true },
+        order: [[{ model: Story, as: 'stories' }, { model: Mockup, as: 'mockups' }, 'code', 'ASC']],
         required: false,
         include: [{
           model: Interaction,
           as: 'interactions',
           where: { active: true },
+          order: [[{ model: Story, as: 'stories' }, { model: Mockup, as: 'mockups' }, { model: Interaction, as: 'interactions' }, 'code', 'ASC']],
           required: false
         }]
+      }, {
+        model: Assertion,
+        as: 'assertions',
+        where: { active: true },
+        order: [[{ model: Story, as: 'stories' }, { model: Assertion, as: 'assertions' }, 'code', 'ASC']],
+        required: false
       }]
     })
     .then(respondWithResult(res))
