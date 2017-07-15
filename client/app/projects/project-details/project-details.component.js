@@ -35,17 +35,15 @@ export class projectDetailsComponent {
       })
       .catch(() => this.$state.go('projects'));
 
-    const generateDeleteMethod = (model, pluralModel, successText) => {
-      return this.Modal.confirm.delete((entity, parent) => {
-        this.$http
-          .delete(`/api/${pluralModel}/${entity._id}`)
-          .then(() => {
-            this.Modal.alert.success()(successText);
-            parent[pluralModel].splice(parent[pluralModel].indexOf(entity), 1);
-          })
-          .catch(() => this.Modal.alert.error()(`An error occured deleting the ${model}!`));
-      });
-    };
+    const generateDeleteMethod = (model, pluralModel, successText) => this.Modal.confirm.delete((entity, parent) => {
+      this.$http
+        .delete(`/api/${pluralModel}/${entity._id}`)
+        .then(() => {
+          this.Modal.alert.success()(successText);
+          parent[pluralModel].splice(parent[pluralModel].indexOf(entity), 1);
+        })
+        .catch(() => this.Modal.alert.error()(`An error occured deleting the ${model}!`));
+    });
 
     this.deleteEpic = generateDeleteMethod('epic', 'epics', 'Epic successfully deleted!');
     this.deleteStory = generateDeleteMethod('story', 'stories', 'Story successfully deleted!');
@@ -92,6 +90,8 @@ export class projectDetailsComponent {
               } else {
                 project.epics.push(response.data);
               }
+            } else {
+              project.epics = [response.data];
             }
           })
           .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the epic!`));
@@ -137,6 +137,8 @@ export class projectDetailsComponent {
               } else {
                 epic.stories.push(response.data);
               }
+            } else {
+              epic.stories = [response.data];
             }
           })
           .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the story!`));
@@ -182,6 +184,8 @@ export class projectDetailsComponent {
               } else {
                 story.assertions.push(response.data);
               }
+            } else {
+              story.assertions = [response.data];
             }
           })
           .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the assertion!`));
@@ -232,6 +236,8 @@ export class projectDetailsComponent {
               } else {
                 story.mockups.push(response.data);
               }
+            } else {
+              story.mockups = [response.data];
             }
           })
           .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the mockup!`));
@@ -280,6 +286,8 @@ export class projectDetailsComponent {
               } else {
                 mockup.interactions.push(response.data);
               }
+            } else {
+              mockup.interactions = [response.data];
             }
           })
           .catch(() => this.Modal.alert.error()(`An error occured ${result._id ? 'upd' : 'cre'}ating the mockup!`));
@@ -287,7 +295,8 @@ export class projectDetailsComponent {
   }
 }
 
-export default angular.module('projectManagementApp.projects.details', [
+export default angular
+  .module('projectManagementApp.projects.details', [
     epicForm,
     storyForm,
     assertionForm,

@@ -62,7 +62,6 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
-    console.log(err)
     res.status(statusCode).send(err);
   };
 }
@@ -188,7 +187,6 @@ export function assertions(req, res) {
 
 // Gets all Mockups of a Story from the DB
 export function mockups(req, res) {
-  console.log('Interaction', Interaction)
   return Mockup
     .findAll({
       where: {

@@ -9,7 +9,7 @@ export class MockupFormComponent {
 
   save(form) {
     if(form.$valid) {
-      delete this.imageError;
+      Reflect.deleteProperty(this, 'imageError');
       if(!this.mockup._id && !this.mockup.file) {
         this.imageError = 'Image is required!';
         return;
@@ -21,9 +21,9 @@ export class MockupFormComponent {
       reader.readAsDataURL(this.mockup.file);
       reader.onloadend = () => {
         this.mockup.image = reader.result;
-        delete this.mockup.file;
+        Reflect.deleteProperty(this.mockup, 'file');
         return this.close({ $value: this.mockup });
-      }
+      };
       reader.onerror = () => {
         this.imageError = 'Unable to parse image.';
       };
